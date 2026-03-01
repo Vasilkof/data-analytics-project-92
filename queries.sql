@@ -22,10 +22,14 @@ ORDER BY
 LIMIT 10;
 
 
--- Report 2: Sellers with average income below overall sellers average
+-- Report 2
 SELECT
     TRIM(e.first_name || ' ' || e.last_name) AS seller,
-    FLOOR(AVG(p.price * s.quantity)) AS average_income
+    FLOOR(
+        AVG(
+            p.price * s.quantity
+        )
+    ) AS average_income
 FROM sales AS s
 INNER JOIN employees AS e
     ON s.sales_person_id = e.employee_id
@@ -34,28 +38,42 @@ INNER JOIN products AS p
 GROUP BY
     e.first_name,
     e.last_name
-HAVING AVG(p.price * s.quantity) < (
-    SELECT
-        AVG(sub.seller_avg) AS avg_seller_avg
-    FROM (
+HAVING
+    AVG(
+        p.price * s.quantity
+    ) < (
         SELECT
-            AVG(p2.price * s2.quantity) AS seller_avg
-        FROM sales AS s2
-        INNER JOIN products AS p2
-            ON s2.product_id = p2.product_id
-        GROUP BY
-            s2.sales_person_id
-    ) AS sub
-)
+            AVG(sub.seller_avg)
+        FROM (
+            SELECT
+                AVG(
+                    p2.price * s2.quantity
+                ) AS seller_avg
+            FROM sales AS s2
+            INNER JOIN products AS p2
+                ON s2.product_id = p2.product_id
+            GROUP BY
+                s2.sales_person_id
+        ) AS sub
+    )
 ORDER BY
     average_income ASC;
 
 
--- Report 3: Sellers income by day of week
+-- Report 3
 SELECT
     TRIM(e.first_name || ' ' || e.last_name) AS seller,
-    TRIM(TO_CHAR(s.sale_date, 'day')) AS day_of_week,
-    FLOOR(SUM(p.price * s.quantity)) AS income
+    TRIM(
+        TO_CHAR(
+            s.sale_date,
+            'day'
+        )
+    ) AS day_of_week,
+    FLOOR(
+        SUM(
+            p.price * s.quantity
+        )
+    ) AS income
 FROM sales AS s
 INNER JOIN employees AS e
     ON s.sales_person_id = e.employee_id
@@ -64,14 +82,23 @@ INNER JOIN products AS p
 GROUP BY
     e.first_name,
     e.last_name,
-    TRIM(TO_CHAR(s.sale_date, 'day')),
-    EXTRACT(ISODOW FROM s.sale_date)
+    TRIM(
+        TO_CHAR(
+            s.sale_date,
+            'day'
+        )
+    ),
+    EXTRACT(
+        ISODOW FROM s.sale_date
+    )
 ORDER BY
-    EXTRACT(ISODOW FROM s.sale_date),
+    EXTRACT(
+        ISODOW FROM s.sale_date
+    ),
     seller;
 
 
--- Report: Number of customers in age groups
+-- Report 4
 SELECT
     CASE
         WHEN c.age BETWEEN 16 AND 25 THEN '16-25'
@@ -86,21 +113,33 @@ ORDER BY
     age_category;
 
 
--- Report: Unique customers and income by month
+-- Report 5
 SELECT
-    TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
-    COUNT(DISTINCT s.customer_id) AS total_customers,
-    FLOOR(SUM(p.price * s.quantity)) AS income
+    TO_CHAR(
+        s.sale_date,
+        'YYYY-MM'
+    ) AS selling_month,
+    COUNT(
+        DISTINCT s.customer_id
+    ) AS total_customers,
+    FLOOR(
+        SUM(
+            p.price * s.quantity
+        )
+    ) AS income
 FROM sales AS s
 INNER JOIN products AS p
     ON s.product_id = p.product_id
 GROUP BY
-    TO_CHAR(s.sale_date, 'YYYY-MM')
+    TO_CHAR(
+        s.sale_date,
+        'YYYY-MM'
+    )
 ORDER BY
     selling_month;
 
 
--- Report: Customers whose first purchase was during a special offer (price = 0)
+-- Report 6
 SELECT
     TRIM(c.first_name || ' ' || c.last_name) AS customer,
     so.sale_date,
