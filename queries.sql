@@ -1,6 +1,5 @@
 -- Report: Total customers
-select
-    count(*) as customers_count
+select count(*) as customers_count
 from customers;
 
 
@@ -46,8 +45,7 @@ having
     avg(
         p.price * s.quantity
     ) < (
-        select
-            avg(sub.seller_avg) as avg_seller_avg
+        select avg(sub.seller_avg) as avg_seller_avg
         from (
             select
                 avg(
@@ -123,9 +121,7 @@ select
         s.sale_date,
         'YYYY-MM'
     ) as selling_month,
-    count(
-        distinct s.customer_id
-    ) as total_customers,
+    count(distinct s.customer_id) as total_customers,
     floor(
         sum(
             p.price * s.quantity
@@ -145,8 +141,8 @@ order by
 
 -- Report: Customers whose first purchase was during a special offer (price = 0)
 select
-    trim(c.first_name || ' ' || c.last_name) as customer,
     so.sale_date,
+    trim(c.first_name || ' ' || c.last_name) as customer,
     trim(e.first_name || ' ' || e.last_name) as seller
 from (
     select distinct on (s.customer_id)
