@@ -1,8 +1,6 @@
 -- Report: Total customers
-SELECT
-    COUNT(*) AS customers_count
+SELECT count(*) AS customers_count
 FROM customers;
-
 
 -- Report 1: Top 10 sellers by income
 SELECT
@@ -141,8 +139,8 @@ ORDER BY
 
 -- Report 6
 SELECT
-    TRIM(c.first_name || ' ' || c.last_name) AS customer,
     so.sale_date,
+    TRIM(c.first_name || ' ' || c.last_name) AS customer,
     TRIM(e.first_name || ' ' || e.last_name) AS seller
 FROM (
     SELECT DISTINCT ON (s.customer_id)
